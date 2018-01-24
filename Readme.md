@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дарья Жукова](https://up.htmlacademy.ru/javascript/12/user/342407).
-* Наставник: `Неизвестно`.
+* Наставник: [Константин Мамаев] (https://htmlacademy.ru/profile/meison).
 
 ---
 
