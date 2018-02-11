@@ -53,25 +53,25 @@ var createAdsArray = function () {
     };
 
     arrayOut.push(
-      {
-        author: {
-          avatar: 'img/avatars/user0' + shuffledUsersAvatarsArray[i] + '.png'
-        },
-        offer: {
-          title: shuffledTitlesArray[i],
-          address: coordinates.x + ', ' + coordinates.y,
-          price: getRandomNumber(1000, 1000000),
-          type: REALTY_TYPES[getRandomNumber(0, REALTY_TYPES.length)],
-          rooms: getRandomNumber(5, 1),
-          guests: getRandomNumber(20, 1),
-          checkin: CHECKIN_TIMES[getRandomNumber(0, CHECKIN_TIMES.length)],
-          checkout: CHECKOUT_TIMES[getRandomNumber(0, CHECKOUT_TIMES.length)],
-          features: createShuffledArray(FEATURES),
-          description: '',
-          photos: arrayShuffle(PHOTOS)
-        },
-        location: coordinates
-      }
+        {
+          author: {
+            avatar: 'img/avatars/user0' + shuffledUsersAvatarsArray[i] + '.png'
+          },
+          offer: {
+            title: shuffledTitlesArray[i],
+            address: coordinates.x + ', ' + coordinates.y,
+            price: getRandomNumber(1000, 1000000),
+            type: REALTY_TYPES[getRandomNumber(0, REALTY_TYPES.length)],
+            rooms: getRandomNumber(5, 1),
+            guests: getRandomNumber(20, 1),
+            checkin: CHECKIN_TIMES[getRandomNumber(0, CHECKIN_TIMES.length)],
+            checkout: CHECKOUT_TIMES[getRandomNumber(0, CHECKOUT_TIMES.length)],
+            features: createShuffledArray(FEATURES),
+            description: '',
+            photos: arrayShuffle(PHOTOS)
+          },
+          location: coordinates
+        }
     );
   }
   return arrayOut;
@@ -205,7 +205,6 @@ var setAddress = function () {
 };
 
 
-
 // ПЕРЕХОД СТРАНИЦЫ В АКТИВНОЕ СОСТОЯНИЕ
 var activated = false;
 var mapPinsList;
@@ -218,7 +217,7 @@ var activatePage = function () {
     map.classList.remove('map--faded');
     var noticeForm = document.querySelector('.notice__form');
     noticeForm.classList.remove('notice__form--disabled');
-    for (var i = 0; i < noticeFieldset.length; i++) {
+    for (i = 0; i < noticeFieldset.length; i++) {
       noticeFieldset[i].removeAttribute('disabled');
     }
 
@@ -231,7 +230,7 @@ var activatePage = function () {
   }
 
   document.addEventListener('click', function (evn) {
-    for (var i = 0; i < evn.path.length; i++) {
+    for (i = 0; i < evn.path.length; i++) {
       if (evn.path[i].className === 'map__pin') {
         map.insertBefore(renderCard(similarAds[getRandomNumber(0, similarAds.length)]), mapFiltersContainer);
       }
@@ -247,13 +246,14 @@ var activatePage = function () {
 var updatePins = function () {
   mapPinsList = document.querySelector('.map__pins');
   var pinList = [];
-  while(mapPinsList.childNodes[0]) {
-    if (mapPinsList.childNodes[0].className != 'map__pin')
+  while (mapPinsList.childNodes[0]) {
+    if (mapPinsList.childNodes[0].className !== 'map__pin') {
       pinList.push(mapPinsList.childNodes[0]);
-    mapPinsList.removeChild(mapPinsList.firstChild);
+      mapPinsList.removeChild(mapPinsList.firstChild);
+    }
   }
 
-  for (var i = 0; i < pinList.length; i++){
+  for (i = 0; i < pinList.length; i++) {
     mapPinsList.appendChild(pinList[i]);
   }
   similarAds = createAdsArray();
