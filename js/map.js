@@ -193,12 +193,6 @@ var setAddress = function () {
 };
 
 
-var clearElementChildList = function (parent) {
-  while (parent.hasChildNodes()) {
-    parent.removeChild(parent.firstElementChild);
-  }
-};
-
 // ПЕРЕХОД СТРАНИЦЫ В АКТИВНОЕ СОСТОЯНИЕ
 var activated = false;
 var similarAds = createAdsArray();
@@ -226,10 +220,6 @@ var activatePage = function () {
     mapPinsList.setAttribute('class', 'map__pin--list');
     document.querySelector('.map__pins').appendChild(mapPinsList);
     mapPinsList.appendChild(generatePins(createAdsArray()));
-
-  } else {
-    clearElementChildList(document.querySelector('.map__pin--list'));
-    document.querySelector('.map__pin--list').appendChild(generatePins(createAdsArray()));
   }
 
   document.addEventListener('click', showAdCard);
@@ -247,4 +237,3 @@ var showAdCard = function (evt) {
     }
   }
 };
-
