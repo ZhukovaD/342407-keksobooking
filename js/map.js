@@ -8,17 +8,12 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var USERS_AVATARS_INDICES = [1, 2, 3, 4, 5, 6, 7, 8];
 
-
-// -----------------ФУНКЦИИ-----------------------------
-
-// Возвращает рандомное число в пределах
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-
 // Перемешивает массив
-var arrayShuffle = function (arrayIn) {
+var shuffleArray = function (arrayIn) {
   var array = arrayIn.slice();
   var randomArray = [];
   while (array.length > 0) {
@@ -29,22 +24,16 @@ var arrayShuffle = function (arrayIn) {
   return randomArray;
 };
 
-
-// Возвращает массив произвольной длины от 0 до длины указанного массива
-// Содержит объекты из указанного массива
-// Объекты в массив записываются в случайном порядке
-var createShuffledArray = function (arrayIn) {
-  var shuffledArray = arrayShuffle(arrayIn);
+var createShuffledArrayRandomLength = function (arrayIn) {
+  var shuffledArray = shuffleArray(arrayIn);
   shuffledArray.splice(getRandomNumber(0, arrayIn.length));
   return shuffledArray;
 };
 
-
-// Создает массив из 8 объектов с определенной структурой
 var createAdsArray = function () {
   var arrayOut = [];
-  var shuffledTitlesArray = arrayShuffle(ADS_TITLES);
-  var shuffledUsersAvatarsArray = arrayShuffle(USERS_AVATARS_INDICES);
+  var shuffledTitlesArray = shuffleArray(ADS_TITLES);
+  var shuffledUsersAvatarsArray = shuffleArray(USERS_AVATARS_INDICES);
 
   for (var i = 0; i < 8; i++) {
     var coordinates = {
@@ -66,9 +55,9 @@ var createAdsArray = function () {
             guests: getRandomNumber(20, 1),
             checkin: CHECKIN_TIMES[getRandomNumber(0, CHECKIN_TIMES.length)],
             checkout: CHECKOUT_TIMES[getRandomNumber(0, CHECKOUT_TIMES.length)],
-            features: createShuffledArray(FEATURES),
+            features: createShuffledArrayRandomLength(FEATURES),
             description: '',
-            photos: arrayShuffle(PHOTOS)
+            photos: shuffleArray(PHOTOS)
           },
           location: coordinates
         }
@@ -80,9 +69,9 @@ var createAdsArray = function () {
 
 // Создает DOM-элементы на основе данных объектов из массива объявлений
 // Заполняет их данными из массива (координаты и аватар)
-var renderPins = function (adsArray) {
+var generatePins = function (adsArray) {
   var mapPinButton = document.querySelector('template').content.querySelector('.map__pin');
-  var fragment = document.createDocumentFragment();
+  var mapPinListFragment = document.createDocumentFragment();
 
   for (var i = 0; i < adsArray.length; i++) {
     var mapPin = mapPinButton.cloneNode(true);
@@ -90,11 +79,10 @@ var renderPins = function (adsArray) {
     mapPin.setAttribute('style', 'left:' + (adsArray[i].location.x - 25) + 'px; top: ' + (adsArray[i].location.y - 70) + 'px;');
     mapPin.querySelector('img').setAttribute('src', adsArray[i].author.avatar);
 
-    fragment.appendChild(mapPin);
+    mapPinListFragment.appendChild(mapPin);
   }
-  return fragment;
+  return mapPinListFragment;
 };
-
 
 // Создает DOM-элемент объявления на основе первого по порядку элемента из массива similarAds и шаблона .map__card
 // Заполняет его данными из объекта
@@ -205,57 +193,58 @@ var setAddress = function () {
 };
 
 
+var clearElementChildList = function (parent) {
+  while (parent.hasChildNodes()) {
+    parent.removeChild(parent.firstElementChild);
+  }
+};
+
 // ПЕРЕХОД СТРАНИЦЫ В АКТИВНОЕ СОСТОЯНИЕ
 var activated = false;
-var mapPinsList;
 var similarAds = createAdsArray();
 var mapFiltersContainer = document.querySelector('.map__filters-container');
+var map = document.querySelector('.map');
+
+
+var activateForm = function () {
+  var noticeForm = document.querySelector('.notice__form');
+  noticeForm.classList.remove('notice__form--disabled');
+  for (i = 0; i < noticeFieldset.length; i++) {
+    noticeFieldset[i].removeAttribute('disabled');
+  }
+};
+
 
 var activatePage = function () {
   if (!activated) {
-    var map = document.querySelector('.map');
-    map.classList.remove('map--faded');
-    var noticeForm = document.querySelector('.notice__form');
-    noticeForm.classList.remove('notice__form--disabled');
-    for (i = 0; i < noticeFieldset.length; i++) {
-      noticeFieldset[i].removeAttribute('disabled');
-    }
 
-    similarAds = createAdsArray();
-    mapPinsList = document.querySelector('.map__pins');
-    mapPinsList.appendChild(renderPins(similarAds));
+    map.classList.remove('map--faded');
+
+    activateForm();
+
+    var mapPinsList = document.createElement('div');
+    mapPinsList.setAttribute('class', 'map__pin--list');
+    document.querySelector('.map__pins').appendChild(mapPinsList);
+    mapPinsList.appendChild(generatePins(createAdsArray()));
 
   } else {
-    updatePins();
+    clearElementChildList(document.querySelector('.map__pin--list'));
+    document.querySelector('.map__pin--list').appendChild(generatePins(createAdsArray()));
   }
 
-  document.addEventListener('click', function (evn) {
-    for (i = 0; i < evn.path.length; i++) {
-      if (evn.path[i].className === 'map__pin') {
-        map.insertBefore(renderCard(similarAds[getRandomNumber(0, similarAds.length)]), mapFiltersContainer);
-      }
-    }
-  });
-
+  document.addEventListener('click', showAdCard);
 
   activated = true;
 };
 
-
-// -----------------------------------------
-var updatePins = function () {
-  mapPinsList = document.querySelector('.map__pins');
-  var pinList = [];
-  while (mapPinsList.childNodes[0]) {
-    if (mapPinsList.childNodes[0].className !== 'map__pin') {
-      pinList.push(mapPinsList.childNodes[0]);
-      mapPinsList.removeChild(mapPinsList.firstChild);
+var showAdCard = function (evt) {
+  if (document.querySelector('.popup') !== null) {
+    document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
+  }
+  for (i = 0; i < evt.path.length; i++) {
+    if (evt.path[i].className === 'map__pin') {
+      map.insertBefore(renderCard(similarAds[getRandomNumber(0, similarAds.length)]), mapFiltersContainer);
     }
   }
-
-  for (i = 0; i < pinList.length; i++) {
-    mapPinsList.appendChild(pinList[i]);
-  }
-  similarAds = createAdsArray();
-  mapPinsList.appendChild(renderPins(similarAds));
 };
+
