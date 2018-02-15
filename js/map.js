@@ -77,6 +77,7 @@ var generatePins = function (adsArray) {
     var mapPin = mapPinButton.cloneNode(true);
 
     mapPin.setAttribute('style', 'left:' + (adsArray[i].location.x - 25) + 'px; top: ' + (adsArray[i].location.y - 70) + 'px;');
+    mapPin.setAttribute('data-ad', i);
     mapPin.querySelector('img').setAttribute('src', adsArray[i].author.avatar);
 
     mapPinListFragment.appendChild(mapPin);
@@ -195,7 +196,6 @@ var setAddress = function () {
 
 // ПЕРЕХОД СТРАНИЦЫ В АКТИВНОЕ СОСТОЯНИЕ
 var activated = false;
-var similarAds = createAdsArray();
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 var map = document.querySelector('.map');
 
@@ -208,7 +208,7 @@ var activateForm = function () {
   }
 };
 
-
+var adsArray = createAdsArray();
 var activatePage = function () {
   if (!activated) {
 
@@ -219,7 +219,7 @@ var activatePage = function () {
     var mapPinsList = document.createElement('div');
     mapPinsList.setAttribute('class', 'map__pin--list');
     document.querySelector('.map__pins').appendChild(mapPinsList);
-    mapPinsList.appendChild(generatePins(createAdsArray()));
+    mapPinsList.appendChild(generatePins(adsArray));
   }
 
   document.addEventListener('click', showAdCard);
@@ -231,9 +231,12 @@ var showAdCard = function (evt) {
   if (document.querySelector('.popup') !== null) {
     document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
   }
+
   for (i = 0; i < evt.path.length; i++) {
     if (evt.path[i].className === 'map__pin') {
-      map.insertBefore(renderCard(similarAds[getRandomNumber(0, similarAds.length)]), mapFiltersContainer);
+      map.insertBefore(renderCard(adsArray[evt.path[i].dataset.ad]), mapFiltersContainer);
     }
   }
 };
+
+

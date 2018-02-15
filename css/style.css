@@ -270,7 +270,8 @@ textarea:focus
 }
 
 .map__pin:not(.map__pin--main):hover::after,
-.map__pin:not(.map__pin--main):active::after
+.map__pin:not(.map__pin--main):active::after,
+.map__pin:not(.map__pin--main):focus::after
 
 {
     background-position: 0 -88px;
