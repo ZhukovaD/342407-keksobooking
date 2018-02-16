@@ -240,33 +240,12 @@ var showAdCard = function (evt) {
     activeAdButton.classList.remove('map__pin--active');
   }
   var evtElement = evt.target;
-  // console.log(evtElement.classList);
-  // if (evtElement.className === 'map__pin') {
-  //   map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
-  //   evtElement.classList.add('map__pin--active');
-  //   activeAdButton = evtElement;
-  // } else {
-  //   while (evtElement.className !== 'map__pin' && evtElement.parentNode !== null) {
-  //     evtElement = evtElement.parentNode;
-  //     if (evtElement.className === 'map__pin') {
-  //       map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
-  //       evtElement.classList.add('map__pin--active');
-  //       activeAdButton = evtElement;
-  //     }
-  //   }
-  // }
-
-  if(!evtElement.classList.contains('map__pin--main')) {
-    while (!evtElement.classList.contains('map')) {
-      if (evtElement.classList.contains('map__pin')) {
-        map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
-        evtElement.classList.add('map__pin--active');
-        activeAdButton = evtElement;
-        return;
-      }
-      evtElement = evtElement.parentNode;
+  while (!evtElement.classList.contains('map')) {
+    if (evtElement.classList.contains('map__pin') && !evtElement.classList.contains('map__pin--main')) {
+      map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
+      evtElement.classList.add('map__pin--active');
+      return;
     }
+    evtElement = evtElement.parentNode;
   }
 };
-
-
