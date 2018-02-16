@@ -227,14 +227,30 @@ var activatePage = function () {
   activated = true;
 };
 
+
+var activeAdButton = null;
+
 var showAdCard = function (evt) {
   if (document.querySelector('.popup') !== null) {
     document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
   }
 
-  for (i = 0; i < evt.path.length; i++) {
-    if (evt.path[i].className === 'map__pin') {
-      map.insertBefore(renderCard(adsArray[evt.path[i].dataset.ad]), mapFiltersContainer);
+  if (activeAdButton !== null) {
+    activeAdButton.classList.remove('map__pin--active');
+  }
+  var evtElement = evt.target;
+  if (evtElement.className === 'map__pin') {
+    map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
+    evtElement.classList.add('map__pin--active');
+    activeAdButton = evtElement;
+  } else {
+    while (evtElement.className !== 'map__pin' && evtElement.parentNode !== null) {
+      evtElement = evtElement.parentNode;
+      if (evtElement.className === 'map__pin') {
+        map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
+        evtElement.classList.add('map__pin--active');
+        activeAdButton = evtElement;
+      }
     }
   }
 };
