@@ -249,3 +249,102 @@ var showAdCard = function (evt) {
     evtElement = evtElement.parentNode;
   }
 };
+
+// Изменение время заселения/выезда
+var checkinTime = document.querySelector('#timein');
+var checkoutTime = document.querySelector('#timeout');
+
+var setTime = function (evt) {
+  if (evt.target.name === 'timein') {
+    checkoutTime.value = evt.target.value;
+  } else {
+    checkinTime.value = evt.target.value;
+  }
+};
+
+checkinTime.addEventListener('change', setTime);
+checkoutTime.addEventListener('change', setTime);
+
+
+// Изменение минимальной цены в зависимости от типа жилья
+var realtyType = document.querySelector('#type');
+var realtyPrice = document.querySelector('#price');
+
+var updateRealtyPrice = function () {
+  switch (realtyType.value) {
+    case 'flat':
+      realtyPrice.min = 1000;
+      break;
+    case 'bungalo':
+      realtyPrice.min = 0;
+      break;
+    case 'house':
+      realtyPrice.min = 5000;
+      break;
+    case 'palace':
+      realtyPrice.min = 10000;
+  }
+};
+
+realtyType.addEventListener('change', updateRealtyPrice);
+
+
+// Изменение кол-ва гостей в зависимости от кол-ва комнат
+var roomNumber = document.querySelector('#room_number');
+var capacity = document.querySelector('#capacity');
+var roomTextArr = ['для 1 гостя', 'для 2 гостей', 'для 3 гостей', 'не для гостей'];
+
+var updateRoomRules = function () {
+  while (capacity.hasChildNodes()) {
+    capacity.removeChild(capacity.firstChild);
+  }
+  var option;
+
+  switch (roomNumber.value) {
+    case '1':
+      option = document.createElement('option');
+      option.value = 1;
+      option.text = roomTextArr[0];
+      capacity.add(option);
+      break;
+    case '2':
+      for (i = 1; i < 3; i++) {
+        option = document.createElement('option');
+        option.value = i;
+        option.text = roomTextArr[i - 1];
+        capacity.add(option);
+      }
+      break;
+    case '3':
+      for (i = 1; i < 4; i++) {
+        option = document.createElement('option');
+        option.value = i;
+        option.text = roomTextArr[i - 1];
+        capacity.add(option);
+      }
+      break;
+    case '100':
+      option = document.createElement('option');
+      option.value = 100;
+      option.text = roomTextArr[3];
+      capacity.add(option);
+  }
+};
+
+roomNumber.addEventListener('change', updateRoomRules);
+updateRoomRules();
+
+
+// Изменение поведения кнопки submit
+var formSubmitButton = document.querySelector('.form__submit');
+var formValidation = function () {
+  var check = 1;
+  if (document.querySelector('#price').value < document.querySelector('#price').min) {
+    document.querySelector('#price').style.boxShadow = '0 0 4px 1px #ff6547';
+    check *= 0;
+  }
+  return (check === 1);
+};
+
+formSubmitButton.addEventListener('click', formValidation);
+
