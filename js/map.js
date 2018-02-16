@@ -8,17 +8,12 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var USERS_AVATARS_INDICES = [1, 2, 3, 4, 5, 6, 7, 8];
 
-
-// -----------------ФУНКЦИИ-----------------------------
-
-// Возвращает рандомное число в пределах
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-
 // Перемешивает массив
-var arrayShuffle = function (arrayIn) {
+var shuffleArray = function (arrayIn) {
   var array = arrayIn.slice();
   var randomArray = [];
   while (array.length > 0) {
@@ -29,22 +24,16 @@ var arrayShuffle = function (arrayIn) {
   return randomArray;
 };
 
-
-// Возвращает массив произвольной длины от 0 до длины указанного массива
-// Содержит объекты из указанного массива
-// Объекты в массив записываются в случайном порядке
-var createShuffledArray = function (arrayIn) {
-  var shuffledArray = arrayShuffle(arrayIn);
+var createShuffledArrayRandomLength = function (arrayIn) {
+  var shuffledArray = shuffleArray(arrayIn);
   shuffledArray.splice(getRandomNumber(0, arrayIn.length));
   return shuffledArray;
 };
 
-
-// Создает массив из 8 объектов с определенной структурой
 var createAdsArray = function () {
   var arrayOut = [];
-  var shuffledTitlesArray = arrayShuffle(ADS_TITLES);
-  var shuffledUsersAvatarsArray = arrayShuffle(USERS_AVATARS_INDICES);
+  var shuffledTitlesArray = shuffleArray(ADS_TITLES);
+  var shuffledUsersAvatarsArray = shuffleArray(USERS_AVATARS_INDICES);
 
   for (var i = 0; i < 8; i++) {
     var coordinates = {
@@ -66,9 +55,9 @@ var createAdsArray = function () {
             guests: getRandomNumber(20, 1),
             checkin: CHECKIN_TIMES[getRandomNumber(0, CHECKIN_TIMES.length)],
             checkout: CHECKOUT_TIMES[getRandomNumber(0, CHECKOUT_TIMES.length)],
-            features: createShuffledArray(FEATURES),
+            features: createShuffledArrayRandomLength(FEATURES),
             description: '',
-            photos: arrayShuffle(PHOTOS)
+            photos: shuffleArray(PHOTOS)
           },
           location: coordinates
         }
@@ -80,21 +69,21 @@ var createAdsArray = function () {
 
 // Создает DOM-элементы на основе данных объектов из массива объявлений
 // Заполняет их данными из массива (координаты и аватар)
-var renderPins = function (adsArray) {
-  var mapPinItem = document.querySelector('.map__pin');
-  var fragment = document.createDocumentFragment();
+var generatePins = function (adsArray) {
+  var mapPinButton = document.querySelector('template').content.querySelector('.map__pin');
+  var mapPinListFragment = document.createDocumentFragment();
 
   for (var i = 0; i < adsArray.length; i++) {
-    var mapPin = mapPinItem.cloneNode(true);
+    var mapPin = mapPinButton.cloneNode(true);
 
     mapPin.setAttribute('style', 'left:' + (adsArray[i].location.x - 25) + 'px; top: ' + (adsArray[i].location.y - 70) + 'px;');
+    mapPin.setAttribute('data-ad', i);
     mapPin.querySelector('img').setAttribute('src', adsArray[i].author.avatar);
 
-    fragment.appendChild(mapPin);
+    mapPinListFragment.appendChild(mapPin);
   }
-  return fragment;
+  return mapPinListFragment;
 };
-
 
 // Создает DOM-элемент объявления на основе первого по порядку элемента из массива similarAds и шаблона .map__card
 // Заполняет его данными из объекта
@@ -164,20 +153,99 @@ var renderCard = function (adsArrayElement) {
 
 // --------------------------------------------------------
 
-// 1. Создает массив объявлений
-var similarAds = createAdsArray();
+// НЕАКТИВНОЕ СОСТОЯНИЕ СТРАНИЦЫ
+
+// * делает все fieldset неактивными.
+var noticeFieldset = document.querySelector('.notice__form').querySelectorAll('fieldset');
+for (var i = 0; i < noticeFieldset.length; i++) {
+  noticeFieldset[i].setAttribute('disabled', 'disabled');
+}
+
+//* находит начальные координаты метки
+var MAP_HEIGHT = 750;
+var MAP_WIDTH = 1200;
+var MAP_PIN_WIDTH = 50;
+var MAP_PIN_HEIGHT = 70;
+var address = document.getElementsByName('address')[0];
+
+var initialMapPinCoordinates = {
+  y: Math.floor(MAP_HEIGHT / 2 + MAP_PIN_HEIGHT / 2),
+  x: Math.floor(MAP_WIDTH / 2 + MAP_PIN_WIDTH / 2)
+};
+
+//* записывает найденные координаты в поле address
+address.value = initialMapPinCoordinates.x + ', ' + initialMapPinCoordinates.y;
+
+// * активирует страницу при перетаскивании метки
+var mainPinHandle = document.querySelector('.map__pin--main');
+
+mainPinHandle.addEventListener('mouseup', function () {
+  activatePage();
+  setAddress();
+});
+
+// изменение координат метки
+var setAddress = function () {
+  var changeMapPinCoordinates = {
+    y: Math.floor(MAP_HEIGHT / 2 + MAP_PIN_HEIGHT),
+    x: Math.floor(MAP_WIDTH / 2 + MAP_PIN_WIDTH / 2)
+  };
+  address.value = changeMapPinCoordinates.x + ', ' + changeMapPinCoordinates.y;
+};
 
 
-// 2. Делает карту активной
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
-
-
-// 3., 4. Создает DOM-элементы меток на карте и отрисовывает сгенерированные DOM-элементы в блок .map__pins
-var mapPinsList = document.querySelector('.map__pins');
-mapPinsList.appendChild(renderPins(similarAds));
-
-
-// 5. Вставляет полученный DOM-элемент объявления в блок .map перед блоком .map__filters-container
+// ПЕРЕХОД СТРАНИЦЫ В АКТИВНОЕ СОСТОЯНИЕ
+var activated = false;
 var mapFiltersContainer = document.querySelector('.map__filters-container');
-map.insertBefore(renderCard(similarAds[0]), mapFiltersContainer);
+var map = document.querySelector('.map');
+
+
+var activateForm = function () {
+  var noticeForm = document.querySelector('.notice__form');
+  noticeForm.classList.remove('notice__form--disabled');
+  for (i = 0; i < noticeFieldset.length; i++) {
+    noticeFieldset[i].removeAttribute('disabled');
+  }
+};
+
+var adsArray = createAdsArray();
+var activatePage = function () {
+  if (!activated) {
+
+    map.classList.remove('map--faded');
+
+    activateForm();
+
+    var mapPinsList = document.createElement('div');
+    mapPinsList.setAttribute('class', 'map__pin--list');
+    document.querySelector('.map__pins').appendChild(mapPinsList);
+    mapPinsList.appendChild(generatePins(adsArray));
+  }
+
+  map.addEventListener('click', showAdCard);
+
+  activated = true;
+};
+
+
+var activeAdButton = null;
+
+var showAdCard = function (evt) {
+
+  if (document.querySelector('.popup') !== null) {
+    document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
+  }
+
+  if (activeAdButton !== null) {
+    activeAdButton.classList.remove('map__pin--active');
+  }
+  var evtElement = evt.target;
+  while (!evtElement.classList.contains('map')) {
+    if (evtElement.classList.contains('map__pin') && !evtElement.classList.contains('map__pin--main')) {
+      map.insertBefore(renderCard(adsArray[evtElement.dataset.ad]), mapFiltersContainer);
+      evtElement.classList.add('map__pin--active');
+      return;
+    }
+    evtElement = evtElement.parentNode;
+  }
+};

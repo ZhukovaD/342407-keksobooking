@@ -276,6 +276,10 @@ textarea:focus
     background-position: 0 -88px;
 }
 
+.map__pin--list .map__pin--active::after {
+  background-position: 0 -88px;
+}
+
 .map__pin:active img
 {
     box-shadow: 0 0 15px 15px rgba(255, 86, 53, .7);
@@ -285,7 +289,6 @@ textarea:focus
 {
     top: 375px;
     left: 50%;
-
     width: 65px;
     height: 65px;
 
