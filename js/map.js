@@ -343,6 +343,10 @@ var formValidation = function () {
     document.querySelector('#price').style.boxShadow = '0 0 4px 1px #ff6547';
     check *= 0;
   }
+  if (!(document.querySelector('#title').value.length > 30 || document.querySelector('#title').value.length < 100)) {
+    document.querySelector('#title').style.boxShadow = '0 0 4px 1px #ff6547';
+    check *= 0;
+  }
   return (check === 1);
 };
 
