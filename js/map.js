@@ -299,56 +299,31 @@ var updateRoomRules = function () {
     capacity.removeChild(capacity.firstChild);
   }
   var option;
+  var createOption = function (optionElementValue, roomTextElement) {
+    option = document.createElement('option');
+    option.value = optionElementValue;
+    option.text = roomTextArr[roomTextElement];
+    capacity.add(option);
+  };
 
   switch (roomNumber.value) {
     case '1':
-      option = document.createElement('option');
-      option.value = 1;
-      option.text = roomTextArr[0];
-      capacity.add(option);
+      createOption(1, 0);
       break;
     case '2':
       for (i = 1; i < 3; i++) {
-        option = document.createElement('option');
-        option.value = i;
-        option.text = roomTextArr[i - 1];
-        capacity.add(option);
+        createOption(i, i - 1);
       }
       break;
     case '3':
       for (i = 1; i < 4; i++) {
-        option = document.createElement('option');
-        option.value = i;
-        option.text = roomTextArr[i - 1];
-        capacity.add(option);
+        createOption(i, i - 1);
       }
       break;
     case '100':
-      option = document.createElement('option');
-      option.value = 100;
-      option.text = roomTextArr[3];
-      capacity.add(option);
+      createOption(100, 3);
   }
 };
 
 roomNumber.addEventListener('change', updateRoomRules);
 updateRoomRules();
-
-
-// Изменение поведения кнопки submit
-var formSubmitButton = document.querySelector('.form__submit');
-var formValidation = function () {
-  var check = 1;
-  if (document.querySelector('#price').value < document.querySelector('#price').min) {
-    document.querySelector('#price').style.boxShadow = '0 0 4px 1px #ff6547';
-    check *= 0;
-  }
-  if (!(document.querySelector('#title').value.length > 30 || document.querySelector('#title').value.length < 100)) {
-    document.querySelector('#title').style.boxShadow = '0 0 4px 1px #ff6547';
-    check *= 0;
-  }
-  return (check === 1);
-};
-
-formSubmitButton.addEventListener('click', formValidation);
-
