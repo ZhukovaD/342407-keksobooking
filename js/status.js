@@ -83,17 +83,23 @@
       document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
     }
 
+
     if (activeAdButton !== null) {
       activeAdButton.classList.remove('map__pin--active');
     }
     var evtElement = evt.target;
+
+
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__pin') && !evtElement.classList.contains('map__pin--main')) {
         map.insertBefore(window.card.renderCard(window.ads[evtElement.dataset.ad]), mapFiltersContainer);
         evtElement.classList.add('map__pin--active');
+        activeAdButton = evtElement;
         return;
       }
       evtElement = evtElement.parentNode;
+      activeAdButton = evtElement;
     }
+
   };
 })();
