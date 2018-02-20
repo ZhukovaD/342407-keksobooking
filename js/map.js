@@ -123,9 +123,7 @@
       } else {
         positionY = mainPinHandle.offsetTop - shift.y;
       }
-
-      mainPinHandle.style.position = 'absolute';
-      mainPinHandle.style.zIndex = '100000';
+      
       mainPinHandle.style.top = positionY + 'px';
       mainPinHandle.style.left = positionX + 'px';
       address.value = Math.floor(positionX + MAP_PIN_WIDTH / 2) + ', ' + Math.floor(positionY + MAP_PIN_HEIGHT);
