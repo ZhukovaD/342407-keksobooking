@@ -2,11 +2,11 @@
 
 window.card = (function () {
   return {
-    renderCard: function (adsArrayElement) {
+    renderCard: function (ad) {
       var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
       var realtyRus;
-      switch (adsArrayElement.offer.type) {
+      switch (ad.offer.type) {
         case ('flat'):
           realtyRus = 'Квартира';
           break;
@@ -18,13 +18,13 @@ window.card = (function () {
       }
 
       var mapCard = mapCardTemplate.cloneNode(true);
-      mapCard.querySelector('h3').textContent = adsArrayElement.offer.title;
-      mapCard.querySelector('p').textContent = adsArrayElement.offer.address;
-      mapCard.querySelector('.popup__price').textContent = adsArrayElement.offer.price + '\u20BD/ночь';
+      mapCard.querySelector('h3').textContent = ad.offer.title;
+      mapCard.querySelector('p').textContent = ad.offer.address;
+      mapCard.querySelector('.popup__price').textContent = ad.offer.price + '\u20BD/ночь';
       mapCard.querySelector('h4').textContent = realtyRus;
-      mapCard.querySelectorAll('p')[2].textContent = adsArrayElement.offer.rooms + ' комнаты для ' + adsArrayElement.offer.guests + ' гостей';
-      mapCard.querySelectorAll('p')[3].textContent = 'Заезд после ' + adsArrayElement.offer.checkin + ', выезд до ' + adsArrayElement.offer.checkout;
-      mapCard.querySelectorAll('p')[4].textContent = adsArrayElement.offer.description;
+      mapCard.querySelectorAll('p')[2].textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+      mapCard.querySelectorAll('p')[3].textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+      mapCard.querySelectorAll('p')[4].textContent = ad.offer.description;
 
 
       // Выводит доступные удобства из списка offer.features в список .popup__features (сначала очищает список шаблона)
@@ -36,9 +36,9 @@ window.card = (function () {
 
 
       // --Устанавливает атрибут "класс" в соответствии со значением offer.features[i]
-      for (var i = 0; i < adsArrayElement.offer.features.length; i++) {
+      for (var i = 0; i < ad.offer.features.length; i++) {
         var popup = document.createElement('li');
-        popup.setAttribute('class', 'feature feature--' + adsArrayElement.offer.features[i]);
+        popup.setAttribute('class', 'feature feature--' + ad.offer.features[i]);
         popupFeatures.appendChild(popup);
       }
 
@@ -49,10 +49,10 @@ window.card = (function () {
       var popupPicturesList = mapCard.querySelector('.popup__pictures');
       popupPicturesList.removeChild(popupPicturesList.querySelector('li'));
 
-      for (i = 0; i < adsArrayElement.offer.photos.length; i++) {
+      for (i = 0; i < ad.offer.photos.length; i++) {
         var popupPicturesItem = document.createElement('li');
         var popupImage = document.createElement('img');
-        popupImage.setAttribute('src', adsArrayElement.offer.photos[i]);
+        popupImage.setAttribute('src', ad.offer.photos[i]);
         popupImage.setAttribute('width', '105px');
         popupImage.setAttribute('height', '85px');
         popupPicturesItem.appendChild(popupImage);
@@ -60,7 +60,7 @@ window.card = (function () {
       }
 
       // --Заменяет src у аватарки пользователя
-      mapCard.querySelector('img').setAttribute('src', adsArrayElement.author.avatar);
+      mapCard.querySelector('img').setAttribute('src', ad.author.avatar);
 
       return mapCard;
     }
