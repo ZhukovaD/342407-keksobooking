@@ -24,4 +24,3 @@ window.util = (function () {
     }
   };
 })();
-

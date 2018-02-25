@@ -857,3 +857,78 @@ textarea:focus
 {
     background-position: -10px -10px;
 }
+
+
+/*----------------ERROR----------------*/
+.error{
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  width: 400px;
+  top: 300px;
+  left: 50%;
+  margin-right: 50%;
+  transform: translate(-50%,-50%);
+  border:solid 3px #d3d3d3;
+  border-radius: 10px;
+  z-index: 20000;
+  text-align: center;
+}
+
+.error__wrapper{
+  display: flex;
+  padding: 20px;
+  padding-bottom: 10px;
+  flex-direction: column;
+}
+
+.error__picture{
+  align-self: flex-end;
+  padding: 0;
+}
+
+.error__toggle{
+  display: block;
+  position: absolute;
+  top:0;
+  right: 0;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+}
+
+.error__toggle::before{
+  content: "";
+  display: block;
+  position: absolute;
+  top:26px;
+  right: 10px;
+  height: 3px;
+  width: 30px;
+  background-color:#a9a9a9;
+  box-shadow: none;
+  transform: rotate(45deg);
+}
+
+.error__toggle::after{
+  content: "";
+  display: block;
+  position: absolute;
+  top:26px;
+  right: 10px;
+  height: 3px;
+  width: 30px;
+  background-color:#a9a9a9;
+  box-shadow: none;
+  transform: rotate(-45deg);
+}
+
+.error__toggle:hover::before,
+.error__toggle:hover::after{
+  background-color:#808080;
+}
+
+.error__toggle:active::before,
+.error__toggle:active::after{
+  background-color:#d3d3d3;
+}
