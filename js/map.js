@@ -55,7 +55,7 @@
   var showPins = function (pinList) {
     pins = pinList;
     var mapPinsList = document.createElement('div');
-    mapPinsList.setAttribute('class', 'map__pin--list');
+    mapPinsList.classList.add('map__pin--list');
     document.querySelector('.map__pins').appendChild(mapPinsList);
 
     var mapPinButton = document.querySelector('template').content.querySelector('.map__pin');

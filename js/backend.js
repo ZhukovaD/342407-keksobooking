@@ -1,10 +1,10 @@
 'use strict';
 
 window.backend = (function () {
-
+  var TIMEOUT = 10000; // 10s
   return {
     loadData: function (onSuccess, onError) {
-      var URL = 'https://js.dump.academy/keksobooking/datakdjska';
+      var URL = 'https://js.dump.academy/keksobooking/data';
 
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
@@ -23,7 +23,7 @@ window.backend = (function () {
         onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
       });
 
-      xhr.timeout = 10000; // 10s
+      xhr.timeout = TIMEOUT;
 
       xhr.open('GET', URL);
       xhr.send();
