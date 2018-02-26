@@ -51,6 +51,37 @@
     }
   };
 
+  var pins;
+  var showPins = function (pinList) {
+    pins = pinList;
+    var mapPinsList = document.createElement('div');
+    mapPinsList.classList.add('map__pin--list');
+    document.querySelector('.map__pins').appendChild(mapPinsList);
+
+    var mapPinButton = document.querySelector('template').content.querySelector('.map__pin');
+    var mapPinListFragment = document.createDocumentFragment();
+
+    for (i = 0; i < pinList.length; i++) {
+      var mapPin = mapPinButton.cloneNode(true);
+
+      mapPin.setAttribute('style', 'left:' + (pinList[i].location.x - 25) + 'px; top: ' + (pinList[i].location.y - 70) + 'px;');
+      mapPin.setAttribute('data-ad', i);
+      mapPin.querySelector('img').setAttribute('src', pinList[i].author.avatar);
+
+      mapPinListFragment.appendChild(mapPin);
+    }
+
+    mapPinsList.appendChild(mapPinListFragment);
+  };
+
+  var showPinsError = function () {
+    var modalError = document.querySelector('.error');
+    modalError.style.display = 'block';
+    document.querySelector('.error__toggle').addEventListener('click', function () {
+      modalError.style.display = 'none';
+    });
+  };
+
   var activatePage = function () {
     if (!activated) {
 
@@ -61,7 +92,8 @@
       var mapPinsList = document.createElement('div');
       mapPinsList.setAttribute('class', 'map__pin--list');
       document.querySelector('.map__pins').appendChild(mapPinsList);
-      mapPinsList.appendChild(window.pins);
+      window.backend.loadData(showPins, showPinsError);
+
 
       var changeMapPinCoordinates = {
         y: Math.floor(MAP_HEIGHT / 2 + MAP_PIN_HEIGHT),
@@ -156,15 +188,16 @@
     if (document.querySelector('.popup') !== null) {
       document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
     }
-
     if (activeAdButton !== null) {
       activeAdButton.classList.remove('map__pin--active');
     }
+
     var evtElement = evt.target;
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__pin') && !evtElement.classList.contains('map__pin--main')) {
-        map.insertBefore(window.card.renderCard(window.ads[evtElement.dataset.ad]), mapFiltersContainer);
+        map.insertBefore(window.card.renderCard(pins[evtElement.dataset.ad]), mapFiltersContainer);
         evtElement.classList.add('map__pin--active');
+        activeAdButton = evtElement;
         return;
       }
       evtElement = evtElement.parentNode;
