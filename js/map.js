@@ -54,6 +54,8 @@
   var pinsList;
   var renderPins = function (pinList) {
     pinsList = pinList.slice();
+    pinsList = pinsList.splice(0, 5);
+
     var mapPinsList = document.createElement('div');
     mapPinsList.classList.add('map__pin--list');
     document.querySelector('.map__pins').appendChild(mapPinsList);
@@ -61,12 +63,12 @@
     var mapPinButton = document.querySelector('template').content.querySelector('.map__pin');
     var mapPinListFragment = document.createDocumentFragment();
 
-    for (i = 0; i < pinList.length; i++) {
+    for (i = 0; i < pinsList.length; i++) {
       var mapPin = mapPinButton.cloneNode(true);
 
-      mapPin.setAttribute('style', 'left:' + (pinList[i].location.x - 25) + 'px; top: ' + (pinList[i].location.y - 70) + 'px;');
+      mapPin.setAttribute('style', 'left:' + (pinsList[i].location.x - 25) + 'px; top: ' + (pinsList[i].location.y - 70) + 'px;');
       mapPin.setAttribute('data-ad', i);
-      mapPin.querySelector('img').setAttribute('src', pinList[i].author.avatar);
+      mapPin.querySelector('img').setAttribute('src', pinsList[i].author.avatar);
 
       mapPinListFragment.appendChild(mapPin);
     }
