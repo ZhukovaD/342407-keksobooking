@@ -44,7 +44,7 @@
   // Изменение кол-ва гостей в зависимости от кол-ва комнат
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
-  var roomTextArr = ['для 1 гостя', 'для 2 гостей', 'для 3 гостей', 'не для гостей'];
+  var roomTextArray = ['для 1 гостя', 'для 2 гостей', 'для 3 гостей', 'не для гостей'];
 
   var updateRoomRules = function () {
     while (capacity.hasChildNodes()) {
@@ -54,7 +54,7 @@
     var createOption = function (optionElementValue, roomTextElement) {
       option = document.createElement('option');
       option.value = optionElementValue;
-      option.text = roomTextArr[roomTextElement];
+      option.text = roomTextArray[roomTextElement];
       capacity.add(option);
     };
 
@@ -79,4 +79,37 @@
 
   roomNumber.addEventListener('change', updateRoomRules);
   updateRoomRules();
+
+  var btnSubmit = document.querySelector('.form__submit');
+
+  var submitSuccess = function () {
+    location.reload();
+  };
+
+  var submitFailed = function () {
+    var modalError = document.querySelector('.error');
+    modalError.style.display = 'block';
+    modalError.style.top = '1300px';
+    document.querySelector('.error__toggle').addEventListener('click', function () {
+      modalError.style.display = 'none';
+    });
+  };
+
+  var submitFormData = function (evt) {
+    evt.preventDefault();
+
+    var formData = new FormData(document.querySelector('.notice__form'));
+
+    window.backend.sendData(formData, submitSuccess, submitFailed);
+    return false;
+  };
+
+  btnSubmit.addEventListener('click', submitFormData);
+
+  var resetPage = function () {
+    location.reload();
+  };
+
+  var btnReset = document.querySelector('.form__reset');
+  btnReset.addEventListener('click', resetPage);
 })();

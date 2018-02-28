@@ -27,6 +27,27 @@ window.backend = (function () {
 
       xhr.open('GET', URL);
       xhr.send();
+    },
+
+    sendData: function (formData, onSuccess, onError) {
+      var URL = 'https://js.dump.academy/keksobooking';
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener('load', function () {
+        if (xhr.status === 200) {
+          onSuccess();
+        } else {
+          onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        }
+      });
+      xhr.addEventListener('error', function () {
+        onError('Произошла ошибка соединения');
+      });
+      xhr.addEventListener('timeout', function () {
+        onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      });
+      formData.enctype = 'multipart/form-data';
+      xhr.open('POST', URL);
+      xhr.send(formData);
     }
   };
 })();

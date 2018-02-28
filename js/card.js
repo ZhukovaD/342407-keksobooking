@@ -35,11 +35,16 @@ window.card = (function () {
       }
 
 
-      // --Устанавливает атрибут "класс" в соответствии со значением offer.features[i]
-      for (var i = 0; i < ad.offer.features.length; i++) {
-        var popup = document.createElement('li');
-        popup.setAttribute('class', 'feature feature--' + ad.offer.features[i]);
-        popupFeatures.appendChild(popup);
+      // Устанавливает атрибут "класс" в соответствии со значением offer.features[i]
+      // Скрывает список фич, если их нет
+      if (ad.offer.features.length !== 0) {
+        for (var i = 0; i < ad.offer.features.length; i++) {
+          var popup = document.createElement('li');
+          popup.setAttribute('class', 'feature feature--' + ad.offer.features[i]);
+          popupFeatures.appendChild(popup);
+        }
+      } else {
+        popupFeatures.style.display = 'none';
       }
 
 

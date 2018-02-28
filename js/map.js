@@ -2,13 +2,6 @@
 
 (function () {
   // -----------------ЗАДАЕТ НЕАКТИВНОЕ СОСТОЯНИЕ СТРАНИЦЫ-----------------
-  // делает все fieldset неактивными.
-  var noticeFieldset = document.querySelector('.notice__form').querySelectorAll('fieldset');
-  for (var i = 0; i < noticeFieldset.length; i++) {
-    noticeFieldset[i].setAttribute('disabled', 'disabled');
-  }
-
-  // находит начальные координаты метки
   var MAP_HEIGHT = 750;
   var MAP_WIDTH = 1200;
   var MAP_SKY_HEIGHT = 180;
@@ -18,6 +11,14 @@
   var MAP_PIN_WIDTH = 60;
   var MAP_PIN_HEIGHT = 80;
   var MAP_PIN_BORDER = 15;
+
+  // делает все fieldset неактивными.
+  var noticeFieldset = document.querySelector('.notice__form').querySelectorAll('fieldset');
+  for (var i = 0; i < noticeFieldset.length; i++) {
+    noticeFieldset[i].setAttribute('disabled', 'disabled');
+  }
+
+  // находит начальные координаты метки
   var address = document.getElementsByName('address')[0];
 
   var initialMapPinCoordinates = {
@@ -37,8 +38,12 @@
     activatePage();
   });
 
+  mainPinHandle.addEventListener('keydown', function (evt) {
+    window.util.isEnterEvent(evt, activatePage);
+  });
 
-  var activated = false;
+
+  var activation = false;
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var map = document.querySelector('.map');
 
@@ -50,6 +55,7 @@
       noticeFieldset[i].removeAttribute('disabled');
     }
   };
+
   var pins;
   var pinsList;
   var renderPins = function (pinList) {
@@ -84,15 +90,15 @@
   };
 
   var showPinsError = function () {
-    var modalError = document.querySelector('.error');
-    modalError.style.display = 'block';
-    document.querySelector('.error__toggle').addEventListener('click', function () {
-      modalError.style.display = 'none';
-    });
+    // var modalError = document.querySelector('.error');
+    // modalError.style.display = 'block';
+    // document.querySelector('.error__toggle').addEventListener('click', function () {
+    //   modalError.style.display = 'none';
+    // });
   };
 
   var activatePage = function () {
-    if (!activated) {
+    if (!activation) {
 
       map.classList.remove('map--faded');
 
@@ -112,7 +118,7 @@
 
     map.addEventListener('click', showAdCard);
 
-    activated = true;
+    activation = true;
   };
 
   // перетаскивание метки
@@ -278,9 +284,9 @@
       }
 
 
-      var pinFeaturesArr = Array.from(p.offer.features);
+      var pinFeatures = Array.from(p.offer.features);
       features.map(function (f) {
-        if (!pinFeaturesArr.includes(f)) {
+        if (!pinFeatures.includes(f)) {
           filtered *= 0;
         }
       });
@@ -301,6 +307,6 @@
     }
   };
 
-  document.addEventListener('change', updateFilters);
+  document.querySelector('.map__filters-container').addEventListener('change', updateFilters);
 
 })();
