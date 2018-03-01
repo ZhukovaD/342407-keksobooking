@@ -3,82 +3,71 @@
 window.filterData = (function () {
   return {
     filterPin: function (pins) {
-      var mapPinsList = document.querySelector('.map__pin--list');
-      mapPinsList.parentNode.removeChild(mapPinsList);
 
-      var formInputs = document.querySelector('.map__filters').querySelectorAll('.map__filter');
-      var formInputsArray = Array.from(formInputs);
-      var cbFeatures = document.getElementsByName('features');
-      var cbFeaturesArray = Array.from(cbFeatures);
-      var filters = [];
-      var features = [];
-      var filteredFeatures = cbFeaturesArray.filter(function (cb) {
-        if (cb.checked) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-
-      filteredFeatures.map(function (e) {
-        features.push(e.value);
-      });
-
-
-      formInputsArray.map(function (e) {
-        filters.push(e.value);
-      });
-
-      var filteredPins;
-
-      filteredPins = pins.filter(function (p) {
-        var filtered = 1;
-        if (p.offer.type !== filters[0] && filters[0] !== 'any') {
-          filtered *= 0;
-        }
-
-        var priceInput = filters[1];
-        switch (priceInput) {
-          case 'low':
-            if (p.offer.price >= 10000) {
-              filtered *= 0;
-            }
-            break;
-          case 'middle':
-            if (p.offer.price < 10000 || p.offer.price >= 50000) {
-              filtered *= 0;
-            }
-            break;
-          case 'high':
-            if (p.offer.price < 50000) {
-              filtered *= 0;
-            }
-            break;
-
-        }
-
-        var rooms = filters[2];
-        if (p.offer.rooms !== Number(rooms) && rooms !== 'any') {
-          filtered *= 0;
-        }
-
-        var guests = filters[3];
-        if (p.offer.guests !== Number(guests) && guests !== 'any') {
-          filtered *= 0;
-        }
-
-
-        var pinFeatures = Array.from(p.offer.features);
-        features.map(function (f) {
-          if (!pinFeatures.includes(f)) {
-            filtered *= 0;
+      var filterPrice = function (price) {
+        return function (pin) {
+          switch (price) {
+            case 'low':
+              return pin.offer.price <= 10000;
+            case 'middle':
+              return pin.offer.price > 10000 && pin.offer.price <= 50000;
+            case 'high':
+              return pin.offer.price > 50000;
           }
-        });
-        return (filtered === 1);
-      });
+          return true;
+        };
+      };
 
-      // renderPins(filteredPins);
-      return filteredPins;
+      var filterType = function (type) {
+        return function (pin) {
+          return type === 'any' || pin.offer.type === type;
+        };
+      };
+
+      var filterRooms = function (count) {
+        return function (pin) {
+          if (count === 'any') {
+            return true;
+          }
+          return Number(count) === pin.offer.rooms;
+        };
+      };
+
+      var filterGuests = function (count) {
+        return function (pin) {
+          if (count === 'any') {
+            return true;
+          }
+          return Number(count) === pin.offer.guests;
+        };
+      };
+
+      var filterFeatures = function (features) {
+        return function (pin) {
+          for (var i = 0; i < features.length; i++) {
+            if (!pin.offer.features.includes(features[i])) {
+              return false;
+            }
+          }
+          return true;
+        };
+      };
+
+      var inputs = Array.from(document.querySelectorAll('.map__filter'));
+
+      var filteredFeatures = Array.from(document.querySelectorAll('.map__filter-set input:checked'));
+      var features = filteredFeatures.map(function (e) {
+        return e.value;
+      });
+      var filters = inputs.map(function (e) {
+        return e.value;
+      });
+      return pins
+          .filter(filterType(filters[0]))
+          .filter(filterPrice(filters[1]))
+          .filter(filterRooms(filters[2]))
+          .filter(filterGuests(filters[3]))
+          .filter(filterFeatures(features));
     }
   };
 })();

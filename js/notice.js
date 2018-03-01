@@ -81,11 +81,11 @@
 
   var formNotice = document.querySelector('.notice__form');
 
-  var submitSuccess = function () {
+  var onSubmitSuccess = function () {
     location.reload();
   };
 
-  var submitFailed = function () {
+  var onSubmitFailed = function () {
     var modalError = document.querySelector('.error');
     modalError.style.display = 'block';
     modalError.style.top = '1300px';
@@ -98,7 +98,7 @@
 
     var formData = new FormData(document.querySelector('.notice__form'));
 
-    window.backend.sendData(formData, submitSuccess, submitFailed);
+    window.backend.sendData(formData, onSubmitSuccess, onSubmitFailed);
     return false;
   };
 

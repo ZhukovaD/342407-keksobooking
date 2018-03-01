@@ -223,6 +223,9 @@
     var evtElement = evt.target;
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__filters')) {
+        var mapPinsList = document.querySelector('.map__pin--list');
+        mapPinsList.parentNode.removeChild(mapPinsList);
+
         renderPins(window.filterData.filterPin(pins));
         return;
       }
