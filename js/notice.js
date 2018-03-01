@@ -1,6 +1,5 @@
 'use strict';
 
-// -----------------ВАЛИДАЦИЯ ФОРМЫ-----------------
 (function () {
 // Изменение время заселения/выезда
   var checkinTime = document.querySelector('#timein');
@@ -80,7 +79,7 @@
   roomNumber.addEventListener('change', updateRoomRules);
   updateRoomRules();
 
-  var btnSubmit = document.querySelector('.form__submit');
+  var formNotice = document.querySelector('.notice__form');
 
   var submitSuccess = function () {
     location.reload();
@@ -95,8 +94,7 @@
     });
   };
 
-  var submitFormData = function (evt) {
-    evt.preventDefault();
+  var submitFormData = function () {
 
     var formData = new FormData(document.querySelector('.notice__form'));
 
@@ -104,7 +102,7 @@
     return false;
   };
 
-  btnSubmit.addEventListener('click', submitFormData);
+  formNotice.addEventListener('submit', submitFormData);
 
   var resetPage = function () {
     location.reload();

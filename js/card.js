@@ -29,20 +29,19 @@ window.card = (function () {
 
       // Выводит доступные удобства из списка offer.features в список .popup__features (сначала очищает список шаблона)
       var popupFeatures = mapCard.querySelector('.popup__features');
-
-      while (popupFeatures.firstChild) {
-        popupFeatures.removeChild(popupFeatures.firstChild);
-      }
+      popupFeatures.innerHTML = '';
 
 
       // Устанавливает атрибут "класс" в соответствии со значением offer.features[i]
       // Скрывает список фич, если их нет
+      var featuresFragment = document.createDocumentFragment();
       if (ad.offer.features.length !== 0) {
         for (var i = 0; i < ad.offer.features.length; i++) {
           var popup = document.createElement('li');
           popup.setAttribute('class', 'feature feature--' + ad.offer.features[i]);
-          popupFeatures.appendChild(popup);
+          featuresFragment.appendChild(popup);
         }
+        popupFeatures.appendChild(featuresFragment);
       } else {
         popupFeatures.style.display = 'none';
       }
@@ -52,17 +51,20 @@ window.card = (function () {
       // --Записывает в атрибут src изображения одну из строк массива pictures
       // --Указывает размеры фотографий в атрибутах
       var popupPicturesList = mapCard.querySelector('.popup__pictures');
-      popupPicturesList.removeChild(popupPicturesList.querySelector('li'));
+      popupPicturesList.innerHTML = '';
 
+      var imagesFragment = document.createDocumentFragment();
       for (i = 0; i < ad.offer.photos.length; i++) {
         var popupPicturesItem = document.createElement('li');
         var popupImage = document.createElement('img');
+
         popupImage.setAttribute('src', ad.offer.photos[i]);
         popupImage.setAttribute('width', '105px');
         popupImage.setAttribute('height', '85px');
         popupPicturesItem.appendChild(popupImage);
-        popupPicturesList.appendChild(popupPicturesItem);
+        imagesFragment.appendChild(popupPicturesItem);
       }
+      popupPicturesList.appendChild(imagesFragment);
 
       // --Заменяет src у аватарки пользователя
       mapCard.querySelector('img').setAttribute('src', ad.author.avatar);

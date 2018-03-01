@@ -4,8 +4,8 @@
   // -----------------ЗАДАЕТ НЕАКТИВНОЕ СОСТОЯНИЕ СТРАНИЦЫ-----------------
   var MAP_HEIGHT = 750;
   var MAP_WIDTH = 1200;
-  var MAP_SKY_HEIGHT = 180;
-  var MAP_FILTERS_HEIGHT = 50;
+  var MAP_SKY_HEIGHT = 250;
+  var MAP_FILTERS_HEIGHT = 150;
   var MAP_PIN_MAIN_WIDTH = 65;
   var MAP_PIN_MAIN_HEIGHT = 65;
   var MAP_PIN_WIDTH = 60;
@@ -90,11 +90,11 @@
   };
 
   var showPinsError = function () {
-    // var modalError = document.querySelector('.error');
-    // modalError.style.display = 'block';
-    // document.querySelector('.error__toggle').addEventListener('click', function () {
-    //   modalError.style.display = 'none';
-    // });
+    var modalError = document.querySelector('.error');
+    modalError.style.display = 'block';
+    document.querySelector('.error__toggle').addEventListener('click', function () {
+      modalError.style.display = 'none';
+    });
   };
 
   var activatePage = function () {
@@ -162,8 +162,8 @@
       // ограничения перетаскивания по Y
       if (mainPinHandle.offsetTop - shift.y < MAP_SKY_HEIGHT - MAP_PIN_HEIGHT) {
         positionY = MAP_SKY_HEIGHT - MAP_PIN_HEIGHT;
-      } else if (mainPinHandle.offsetTop - shift.y > MAP_HEIGHT - MAP_FILTERS_HEIGHT - MAP_PIN_HEIGHT / 2) {
-        positionY = MAP_HEIGHT - MAP_FILTERS_HEIGHT - MAP_PIN_HEIGHT / 2;
+      } else if (mainPinHandle.offsetTop - shift.y > MAP_HEIGHT - MAP_FILTERS_HEIGHT - MAP_PIN_HEIGHT) {
+        positionY = MAP_HEIGHT - MAP_FILTERS_HEIGHT - MAP_PIN_HEIGHT;
       } else {
         positionY = mainPinHandle.offsetTop - shift.y;
       }
@@ -212,95 +212,18 @@
         activeAdButton = evtElement;
         return;
       }
+      if (evtElement.parentNode === null) {
+        return;
+      }
       evtElement = evtElement.parentNode;
     }
-  };
-
-
-  var filterPins = function () {
-
-    var mapPinsList = document.querySelector('.map__pin--list');
-    mapPinsList.parentNode.removeChild(mapPinsList);
-
-    var formInputs = document.querySelector('.map__filters').querySelectorAll('.map__filter');
-    var formInputsArray = Array.from(formInputs);
-    var cbFeatures = document.getElementsByName('features');
-    var cbFeaturesArray = Array.from(cbFeatures);
-    var filters = [];
-    var features = [];
-    var filteredFeatures = cbFeaturesArray.filter(function (cb) {
-      if (cb.checked) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    filteredFeatures.map(function (e) {
-      features.push(e.value);
-    });
-
-
-    formInputsArray.map(function (e) {
-      filters.push(e.value);
-    });
-
-    var filteredPins;
-
-    filteredPins = pins.filter(function (p) {
-      var filtered = 1;
-      if (p.offer.type !== filters[0] && filters[0] !== 'any') {
-        filtered *= 0;
-      }
-
-      var priceInput = filters[1];
-      switch (priceInput) {
-        case 'low':
-          if (p.offer.price >= 10000) {
-            filtered *= 0;
-          }
-          break;
-        case 'middle':
-          if (p.offer.price < 10000 || p.offer.price >= 50000) {
-            filtered *= 0;
-          }
-          break;
-        case 'high':
-          if (p.offer.price < 50000) {
-            filtered *= 0;
-          }
-          break;
-
-      }
-
-      var rooms = filters[2];
-      if (p.offer.rooms !== Number(rooms) && rooms !== 'any') {
-        filtered *= 0;
-      }
-
-      var guests = filters[3];
-      if (p.offer.guests !== Number(guests) && guests !== 'any') {
-        filtered *= 0;
-      }
-
-
-      var pinFeatures = Array.from(p.offer.features);
-      features.map(function (f) {
-        if (!pinFeatures.includes(f)) {
-          filtered *= 0;
-        }
-      });
-      return (filtered === 1);
-    });
-
-    renderPins(filteredPins);
   };
 
   var updateFilters = function (evt) {
     var evtElement = evt.target;
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__filters')) {
-        filterPins();
+        renderPins(window.filterData.filterPin(pins));
         return;
       }
       evtElement = evtElement.parentNode;
