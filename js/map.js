@@ -121,6 +121,16 @@
     activation = true;
   };
 
+  var onEscPressed = function (evt) {
+    window.util.isEscEvent(evt, closeAddCard);
+  };
+
+  var closeAddCard = function () {
+    if (document.querySelector('.popup') !== null) {
+      document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
+    }
+  };
+
   // перетаскивание метки
   // установка адреса, если юзер передвинул метку
   mainPinHandle.addEventListener('mousedown', function (evt) {
@@ -187,29 +197,29 @@
       }
     };
 
+
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
 
-
   // делает метку, у которой показано объявление, красной
   var activeAdButton = null;
-
+  var closeBtn;
   var showAdCard = function (evt) {
-
-    if (document.querySelector('.popup') !== null) {
-      document.querySelector('.popup').parentNode.removeChild(document.querySelector('.popup'));
-    }
-    if (activeAdButton !== null) {
-      activeAdButton.classList.remove('map__pin--active');
-    }
 
     var evtElement = evt.target;
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__pin') && !evtElement.classList.contains('map__pin--main')) {
+        closeAddCard();
+        if (activeAdButton !== null) {
+          activeAdButton.classList.remove('map__pin--active');
+        }
+
         map.insertBefore(window.card.renderCard(pinsList[evtElement.dataset.ad]), mapFiltersContainer);
         evtElement.classList.add('map__pin--active');
         activeAdButton = evtElement;
+        closeBtn = document.querySelector('.popup__close');
+        closeBtn.addEventListener('click', closeAddCard);
         return;
       }
       if (evtElement.parentNode === null) {
@@ -218,21 +228,26 @@
       evtElement = evtElement.parentNode;
     }
   };
-
-  var updateFilters = function (evt) {
+  var updatePins = function (evt) {
     var evtElement = evt.target;
     while (!evtElement.classList.contains('map')) {
       if (evtElement.classList.contains('map__filters')) {
         var mapPinsList = document.querySelector('.map__pin--list');
         mapPinsList.parentNode.removeChild(mapPinsList);
-
-        renderPins(window.filterData.filterPin(pins));
+        renderPins(window.filterPin(pins));
         return;
       }
       evtElement = evtElement.parentNode;
     }
   };
 
-  document.querySelector('.map__filters-container').addEventListener('change', updateFilters);
+  var onFilterChange = function (evt) {
+    window.util.debounce(function () {
+      updatePins(evt);
+    }, 1000);
+  };
+
+  document.addEventListener('keydown', onEscPressed);
+  document.querySelector('.map__filters-container').addEventListener('change', onFilterChange);
 
 })();

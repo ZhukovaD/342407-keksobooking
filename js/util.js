@@ -15,6 +15,10 @@ window.util = (function () {
       if (evt.keyCode === OPEN_KEYCODE) {
         action();
       }
+    },
+
+    debounce: function (func, time) {
+      return window.setTimeout(func, time);
     }
   };
 
