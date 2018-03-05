@@ -12,6 +12,8 @@
   var MAP_PIN_HEIGHT = 80;
   var MAP_PIN_BORDER = 15;
 
+  var DEBOUNCE_TIME = 1000;
+
   // делает все fieldset неактивными.
   var noticeFieldset = document.querySelector('.notice__form').querySelectorAll('fieldset');
   for (var i = 0; i < noticeFieldset.length; i++) {
@@ -244,7 +246,7 @@
   var onFilterChange = function (evt) {
     window.util.debounce(function () {
       updatePins(evt);
-    }, 1000);
+    }, DEBOUNCE_TIME);
   };
 
   document.addEventListener('keydown', onEscPressed);
